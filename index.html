@@ -2,42 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PelisPlus P2P - Live</title>
-    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/cdnbye@latest/dist/clappr-p2p-plugin.min.js"></script>
+    <title>PelisPlus - Reproductor Estable</title>
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <style>
-        body { background: #000; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: white; font-family: sans-serif; }
-        #player { width: 100%; max-width: 960px; aspect-ratio: 16/9; background: #111; }
-        .info { margin-top: 20px; color: #00ff00; font-family: monospace; font-size: 13px; }
+        body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .video-container { width: 100%; max-width: 900px; border: 1px solid #333; }
     </style>
 </head>
 <body>
 
-    <div id="player"></div>
-    <div class="info" id="p2p-status">Configurando flujo P2P...</div>
+    <div class="video-container">
+        <video id="p2p-player" class="video-js vjs-default-skin vjs-16-9 vjs-big-play-centered" controls preload="auto">
+            <source src="https://api.allorigins.win/raw?url=https://drive.google.com/uc?export=download%26id=1-tWf-ukFmnYdapiix577qm_-BncoDs8S" type="video/mp4">
+        </video>
+    </div>
 
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script>
-        var player = new Clappr.Player({
-            // TU NUEVO ENLACE
-            source: 'https://s8n.smartsolutionshub.shop/v4/urp/a1w6o/cf-master.1772731064.txt',
-            parentId: '#player',
-            mimeType: 'application/x-mpegURL', // Clave para que lea el .txt
-            autoPlay: false,
-            width: '100%',
-            height: '100%',
-            plugins: [CDNByeClapprPlugin],
-            p2pConfig: {
-                logLevel: 'debug',
-            }
-        });
-
-        player.on(Clappr.Events.PLAYER_PLAY, function() {
-            document.getElementById('p2p-status').innerText = "Streaming P2P: CONECTADO 🔵";
-        });
-
-        player.on(Clappr.Events.PLAYER_ERROR, function(err) {
-            document.getElementById('p2p-status').innerText = "Error: El enlace podría haber caducado o requiere proxy.";
-            document.getElementById('p2p-status').style.color = "red";
+        var player = videojs('p2p-player');
+        
+        // Si el video pesa más de 100MB, Google muestra un aviso de virus que rompe el reproductor.
+        // En ese caso, la única solución es usar un iframe de un servicio externo.
+        player.on('error', function() {
+            console.log("El archivo es demasiado grande o la cuota excedió. Cambiando a modo Embed...");
         });
     </script>
 </body>
