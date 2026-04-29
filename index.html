@@ -6,9 +6,10 @@
     <title>PelisPlus P2P - Scooby-Doo</title>
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <style>
-        body { background-color: #000; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .video-container { width: 95%; max-width: 1000px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
+        body { background-color: #000; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .video-container { width: 95%; max-width: 1000px; background-color: #000; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
         #p2p-info { margin-top: 15px; font-size: 14px; color: #00ff00; font-family: monospace; }
+        h2 { margin-bottom: 20px; font-weight: 300; }
     </style>
 </head>
 <body>
@@ -34,7 +35,7 @@
 
             p2pml.hlsjs.initVideoJsPlayerHandlers(player);
 
-            // AQUÍ TU ENLACE ACTUALIZADO
+            // CARGAR TU ENLACE M3U8
             player.src({
                 src: 'https://s6d.ecofriendlytech.shop/v4/hz/iece9/cf-master.1772761448.txt',
                 type: 'application/x-mpegURL'
@@ -43,6 +44,10 @@
             engine.on("piece_downloaded", (method, size) => {
                 const totalModo = method === 'p2p' ? '🔵 Compartido por P2P' : '🌐 Descargado de Servidor';
                 document.getElementById('p2p-info').innerText = `Modo: ${totalModo} (${(size/1024).toFixed(0)} KB)`;
+            });
+
+            engine.on("peer_connect", peer => {
+                document.getElementById('p2p-info').innerText = "✅ Conectado con otro usuario (Peer)";
             });
         } else {
             document.getElementById('p2p-info').innerText = "P2P no soportado, usando modo normal.";
