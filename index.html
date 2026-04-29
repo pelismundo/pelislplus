@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PelisPlus P2P - Scooby-Doo</title>
+
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    
+    <style>
+        body { background-color: #000; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .video-container { width: 95%; max-width: 1000px; background-color: #000; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
+        #p2p-info { margin-top: 15px; font-size: 14px; color: #00ff00; font-family: monospace; }
+        h2 { margin-bottom: 20px; font-weight: 300; }
+    </style>
+</head>
+<body>
+
+    <h2>Reproductor PelisPlus P2P</h2>
+
+    <div class="video-container">
+        <video id="p2p-player" class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9" controls preload="auto"></video>
+    </div>
+
+    <div id="p2p-info">Iniciando motor P2P...</div>
+
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
+
+    <script>
+        // 1. Verificar si el navegador soporta P2P
+        if (p2pml.hlsjs.Engine.isSupported()) {
+            
+            var engine = new p2pml.hlsjs.Engine();
+
+            var player = videojs('p2p-player', {
+                html5: {
+                    vhs: { overrideNative: true }
+                }
+            });
+
+            // 2. Conectar el motor al reproductor
+            p2pml.hlsjs.initVideoJsPlayerHandlers(player);
+
+            // 3. Cargar el archivo .m3u8
+            player.src({
+                src: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+                type: 'application/x-mpegURL'
+            });
+
+            // 4. Mostrar actividad P2P
+            engine.on("piece_downloaded", (method, size) => {
+                const totalModo = method === 'p2p' ? '🔵 Compartido por P2P' : '🌐 Descargado de Servidor';
+                document.getElementById('p2p-info').innerText = `Modo: ${totalModo} (${(size/1024).toFixed(0)} KB)`;
+            });
+
+            engine.on("peer_connect", peer => {
+                document.getElementById('p2p-info').innerText = "✅ Conectado con otro usuario (Peer)";
+            });
+
+        } else {
+            // Si el navegador es muy viejo y no soporta P2P, cargamos el video normal
+            document.getElementById('p2p-info').innerText = "P2P no soportado, usando modo normal.";
+            var player = videojs('p2p-player');
+            player.src({
+                src: 'https://pelismundo.zya.me/Scooby-Doo! La maldición del monstruo del lago.m3u8',
+                type: 'application/x-mpegURL'
+            });
+        }
+    </script>
+
+</body>
+</html>
