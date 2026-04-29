@@ -2,28 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PelisPlus P2P - Reproductor</title>
+    <title>PelisPlus P2P - Live</title>
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cdnbye@latest/dist/clappr-p2p-plugin.min.js"></script>
     <style>
-        body { background-color: #000; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: sans-serif; }
-        #player { width: 100%; max-width: 900px; border: 2px solid #222; }
-        #status { color: #0f0; margin-top: 15px; font-family: monospace; font-size: 12px; }
+        body { background: #000; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: white; font-family: sans-serif; }
+        #player { width: 100%; max-width: 960px; aspect-ratio: 16/9; background: #111; }
+        .info { margin-top: 20px; color: #00ff00; font-family: monospace; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div id="player"></div>
-    <div id="status">Iniciando Red P2P...</div>
+    <div class="info" id="p2p-status">Configurando flujo P2P...</div>
 
     <script>
         var player = new Clappr.Player({
-            source: 'https://s6d.ecofriendlytech.shop/v4/hz/iece9/cf-master.1772761448.txt',
+            // TU NUEVO ENLACE
+            source: 'https://s8n.smartsolutionshub.shop/v4/urp/a1w6o/cf-master.1772731064.txt',
             parentId: '#player',
+            mimeType: 'application/x-mpegURL', // Clave para que lea el .txt
             autoPlay: false,
             width: '100%',
             height: '100%',
-            mimeType: 'application/x-mpegURL', // Forzamos a que lea el .txt como video
             plugins: [CDNByeClapprPlugin],
             p2pConfig: {
                 logLevel: 'debug',
@@ -31,7 +32,12 @@
         });
 
         player.on(Clappr.Events.PLAYER_PLAY, function() {
-            document.getElementById('status').innerText = "Reproduciendo con P2P Activo 🔵";
+            document.getElementById('p2p-status').innerText = "Streaming P2P: CONECTADO 🔵";
+        });
+
+        player.on(Clappr.Events.PLAYER_ERROR, function(err) {
+            document.getElementById('p2p-status').innerText = "Error: El enlace podría haber caducado o requiere proxy.";
+            document.getElementById('p2p-status').style.color = "red";
         });
     </script>
 </body>
