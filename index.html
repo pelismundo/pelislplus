@@ -27,28 +27,17 @@
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
 
     <script>
-        if (p2pml.hlsjs.Engine.isSupported()) {
-            var engine = new p2pml.hlsjs.Engine();
-            var player = videojs('p2p-player', {
-                html5: { vhs: { overrideNative: true } }
-            });
+        // URL original del video
+        var videoUrl = 'https://s6d.ecofriendlytech.shop/v4/hz/iece9/cf-master.1772761448.txt';
+        // URL con Proxy para saltar el bloqueo de CORS
+        var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(videoUrl);
 
-            p2pml.hlsjs.initVideoJsPlayerHandlers(player);
-
-            // CARGAR TU ENLACE M3U8
-            player.src({
-                src: 'https://pelismundo.zya.me/El Hobbit: Un viaje inesperado.m3u8',
-                type: 'application/x-mpegURL'
-            });
-<script>
-        // Forzamos al reproductor a ignorar que la extensión es .txt
         if (p2pml.hlsjs.Engine.isSupported()) {
             var engine = new p2pml.hlsjs.Engine();
             var player = videojs('p2p-player', {
                 html5: {
                     vhs: { overrideNative: true },
                     hlsjsConfig: {
-                        // Este ajuste es clave para que acepte el archivo .txt
                         strictSceneDesign: false,
                         checkPurity: false
                     }
@@ -58,19 +47,27 @@
             p2pml.hlsjs.initVideoJsPlayerHandlers(player);
 
             player.src({
-                src: 'https://s6d.ecofriendlytech.shop/v4/hz/iece9/cf-master.1772761448.txt',
-                type: 'application/x-mpegURL' // Aquí le decimos que SÍ es un video
+                src: proxyUrl,
+                type: 'application/x-mpegURL'
             });
 
             engine.on("piece_downloaded", (method, size) => {
                 const totalModo = method === 'p2p' ? '🔵 P2P Activo' : '🌐 Servidor';
                 document.getElementById('p2p-info').innerText = `Modo: ${totalModo} | Transferido: ${(size/1024).toFixed(0)} KB`;
             });
+
+            engine.on("peer_connect", peer => {
+                document.getElementById('p2p-info').innerText = "✅ Conectado con otro usuario (Peer)";
+            });
         } else {
+            // Modo normal si no hay soporte P2P
             var player = videojs('p2p-player');
             player.src({
-                src: 'https://s6d.ecofriendlytech.shop/v4/hz/iece9/cf-master.1772761448.txt',
+                src: proxyUrl,
                 type: 'application/x-mpegURL'
             });
+            document.getElementById('p2p-info').innerText = "P2P no soportado, usando modo normal.";
         }
     </script>
+</body>
+</html>
